@@ -1,7 +1,20 @@
+import { cookies } from "next/headers";
+
 export async function getCurrentUser() {
   try {
+    const cookieStore = await cookies();
+
+    const cookieHeader = cookieStore
+      .getAll()
+      .map(
+        (cookie) => `${cookie.name}=${cookie.value}`
+      )
+      .join("; ");
+
     const res = await fetch("http://localhost:5000/api/auth/me", {
-      credentials: "include",
+      headers: {
+        Cookie: cookieHeader, 
+      },
       cache: "no-store",
     });
 
@@ -9,8 +22,8 @@ export async function getCurrentUser() {
 
     const json = await res.json();
     return json.data;
-  } catch {
+  } catch (error) {
+    console.error("getCurrentUser error:", error);
     return null;
   }
 }
-
