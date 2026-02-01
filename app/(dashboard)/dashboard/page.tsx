@@ -1,11 +1,19 @@
-import React from 'react'
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
 
-function StudentDashboard() {
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div>
-      <h1>StudentDashboard</h1>
+      <h1 className="text-xl font-bold">
+        Welcome, {user.name}
+      </h1>
     </div>
-  )
+  );
 }
 
-export default StudentDashboard
