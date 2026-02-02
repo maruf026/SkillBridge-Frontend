@@ -1,75 +1,61 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
 import { cookies } from "next/headers";
-
-/*Fetch function*/
-
-
+import { getCurrentUser } from "@/lib/auth";
+import BookingActions from "@/components/booking/BookingActions";
 
 
-
-async function getStudentBookings() {
+async function getTutorBookings() {
   const cookieStore = await cookies();
 
   const cookieHeader = cookieStore
     .getAll()
-    .map(
-      (cookie) => `${cookie.name}=${cookie.value}`
-    )
+    .map(c => `${c.name}=${c.value}`)
     .join("; ");
 
   const res = await fetch(
-    "http://localhost:5000/api/bookings/student",
+    "http://localhost:5000/api/bookings/tutor",
     {
       headers: {
-        Cookie: cookieHeader, 
+        Cookie: cookieHeader,
       },
       cache: "no-store",
     }
   );
 
   if (!res.ok) {
-    throw new Error("Failed to fetch bookings");
+    throw new Error("Failed to fetch tutor bookings");
   }
 
   const json = await res.json();
   return json.data;
 }
 
-
-
-/*Page component */
-
-export default async function StudentBookingsPage() {
+export default async function TutorBookingsPage() {
   const user = await getCurrentUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
+  if (user.role !== "TUTOR") redirect("/dashboard");
 
-  if (user.role !== "STUDENT") {
-    redirect("/dashboard");
-  }
-
-  const bookings = await getStudentBookings();
+  const bookings = await getTutorBookings();
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">
-        My Bookings
+        Booking Requests
       </h1>
 
       {bookings.length === 0 ? (
         <p className="text-gray-500">
-          You have no bookings yet.
+          No booking requests yet.
         </p>
       ) : (
-        <table className="w-full border-collapse border">
+        <table className="w-full border">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border p-2">Tutor</th>
+              <th className="border p-2">Student</th>
               <th className="border p-2">Date</th>
               <th className="border p-2">Status</th>
+              <th className="border p-2">Action</th>
             </tr>
           </thead>
 
@@ -77,7 +63,7 @@ export default async function StudentBookingsPage() {
             {bookings.map((booking: any) => (
               <tr key={booking.id}>
                 <td className="border p-2">
-                  {booking.tutor?.name}
+                  {booking.student?.name}
                 </td>
 
                 <td className="border p-2">
@@ -85,17 +71,14 @@ export default async function StudentBookingsPage() {
                 </td>
 
                 <td className="border p-2">
-                  <span
-                    className={
-                      booking.status === "PENDING"
-                        ? "text-yellow-600"
-                        : booking.status === "ACCEPTED"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }
-                  >
-                    {booking.status}
-                  </span>
+                  {booking.status}
+                </td>
+
+                <td className="border p-2">
+                  <BookingActions
+                    bookingId={booking.id}
+                    status={booking.status}
+                  />
                 </td>
               </tr>
             ))}
@@ -105,4 +88,3 @@ export default async function StudentBookingsPage() {
     </div>
   );
 }
-

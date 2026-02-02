@@ -9,21 +9,28 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
+    role: "STUDENT",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/auth/sign-up/email", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
+    const res = await fetch(
+      "http://localhost:5000/api/auth/sign-up/email",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      }
+    );
 
-    if (!res.ok) return alert("Registration failed");
+    if (!res.ok) {
+      alert("Registration failed");
+      return;
+    }
 
     router.push("/login");
   };
@@ -32,26 +39,50 @@ export default function RegisterPage() {
     <div className="max-w-md mx-auto mt-20">
       <h1 className="text-2xl font-bold mb-4">Register</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form autoComplete="off" onSubmit={handleSubmit} className="space-y-4">
         <input
-          placeholder="Name"
-          className="w-full border p-2"
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
+  placeholder="Name"
+  className="w-full border p-2"
+  value={form.name}
+  onChange={(e) =>
+    setForm({ ...form, name: e.target.value })
+  }
+/>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2"
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
+<input
+  type="email"
+  placeholder="Email"
+  className="w-full border p-2"
+  value={form.email}
+  autoComplete="email"
+  onChange={(e) =>
+    setForm({ ...form, email: e.target.value })
+  }
+/>
 
-        <input
-          type="password"
-          placeholder="Password"
+<input
+  type="password"
+  placeholder="Password"
+  className="w-full border p-2"
+  value={form.password}
+  autoComplete="new-password"
+  onChange={(e) =>
+    setForm({ ...form, password: e.target.value })
+  }
+/>
+
+
+        {/* ✅ ROLE SELECTION */}
+        <select
           className="w-full border p-2"
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
+          value={form.role}
+          onChange={(e) =>
+            setForm({ ...form, role: e.target.value })
+          }
+        >
+          <option value="STUDENT">Student</option>
+          <option value="TUTOR">Tutor</option>
+        </select>
 
         <button className="w-full bg-black text-white p-2">
           Register
@@ -60,4 +91,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

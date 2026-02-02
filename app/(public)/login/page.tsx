@@ -36,7 +36,7 @@ export default function LoginPage() {
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form autoComplete="off" onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
           placeholder="Email"
