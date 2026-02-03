@@ -1,4 +1,5 @@
-import Link from "next/link";
+import TutorsClient from "@/components/tutor/TutorsClient";
+
 
 async function getTutors() {
   const res = await fetch("http://localhost:5000/api/tutors", {
@@ -17,33 +18,32 @@ export default async function TutorsPage() {
   const tutors = await getTutors();
 
   return (
-    <div className="max-w-5xl mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6">Available Tutors</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {tutors.map((tutor: any) => (
-          <div
-            key={tutor.id}
-            className="border p-4 rounded shadow"
-          >
-            <h2 className="font-semibold text-lg">
-              {tutor.name}
-            </h2>
-
-            <p className="text-sm text-gray-600">
-              Hourly Rate: ৳{tutor.hourlyRate}
+    <div className="bg-slate-50 min-h-screen">
+      {/* Page Header Section */}
+      <header className="bg-white border-b border-slate-200 pt-20 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-indigo-50 text-indigo-600 mb-4">
+              Expert Mentors
+            </span>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+              Find your perfect tutor
+            </h1>
+            <p className="text-lg text-slate-600 leading-relaxed font-medium">
+              Browse through our verified community of educators, filters by subject, 
+              and start your journey toward mastering new skills today.
             </p>
-
-            <Link
-              href={`/tutors/${tutor.id}`}
-              className="text-blue-600 mt-2 inline-block"
-            >
-              View Profile →
-            </Link>
           </div>
-        ))}
-      </div>
+        </div>
+      </header>
+
+      {/* Results Section */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex flex-col gap-8">
+          {/* TutorsClient handles the filters and grid internally */}
+          <TutorsClient tutors={tutors} />
+        </div>
+      </main>
     </div>
   );
 }
-
