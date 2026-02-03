@@ -33,37 +33,38 @@ export default async function MyProfilePage() {
   }
 
   /* ================= STUDENT ================= */
-  if (user.role === "STUDENT") {
-    return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold">
-          My Profile
-        </h1>
+ if (user.role === "STUDENT") {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">
+        My Profile
+      </h1>
 
-        <div className="border p-4 rounded">
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Role:</strong> Student</p>
-        </div>
-
-        <div className="flex gap-4">
-          <a
-            href="/dashboard/bookings"
-            className="border p-3 rounded hover:bg-zinc-900"
-          >
-            📖 My Bookings
-          </a>
-
-          <a
-            href="/tutors"
-            className="border p-3 rounded hover:bg-zinc-900"
-          >
-            🔍 Browse Tutors
-          </a>
-        </div>
+      <div className="border rounded-lg p-5 space-y-2">
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Role:</strong> Student</p>
       </div>
-    );
-  }
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a
+          href="/dashboard/bookings"
+          className="border p-4 rounded hover:bg-zinc-900"
+        >
+          📖 View My Bookings
+        </a>
+
+        <a
+          href="/tutors"
+          className="border p-4 rounded hover:bg-zinc-900"
+        >
+          🔍 Browse Tutors
+        </a>
+      </div>
+    </div>
+  );
+}
+
 
   /* ================= TUTOR ================= */
   if (user.role === "TUTOR") {
