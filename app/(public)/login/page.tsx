@@ -27,7 +27,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/tutors");
+    router.push("/dashboard");
   };
 
   return (

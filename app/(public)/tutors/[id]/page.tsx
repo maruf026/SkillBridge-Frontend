@@ -1,14 +1,26 @@
-import { notFound } from "next/navigation";
 import BookTutor from "@/components/booking/BookTutor";
+import ReviewForm from "@/components/review/ReviewForm";
 import { getCurrentUser } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
 async function getTutor(id: string) {
-  const res = await fetch(
-    `http://localhost:5000/api/tutors/${id}`,
-    { cache: "no-store" }
-  );
+  const res = await fetch(`http://localhost:5000/api/tutors/${id}`, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return null;
+
+  const json = await res.json();
+  return json.data;
+}
+
+async function getTutorReviews(tutorId: string) {
+  const res = await fetch(
+    `http://localhost:5000/api/reviews/tutor/${tutorId}`,
+    { cache: "no-store" },
+  );
+
+  if (!res.ok) return [];
 
   const json = await res.json();
   return json.data;
@@ -21,9 +33,11 @@ export default async function TutorDetailsPage({
 }) {
   const { id } = await params;
   const tutor = await getTutor(id);
+   if (!tutor) notFound();
   const user = await getCurrentUser();
+  const reviews = await getTutorReviews(tutor.userId);
 
-  if (!tutor) notFound();
+ 
 
   return (
     <div className="min-h-screen bg-black text-zinc-200">
@@ -40,11 +54,15 @@ export default async function TutorDetailsPage({
               </span>
             </div>
             <div className="text-right">
-              <p className="text-zinc-500 text-sm uppercase tracking-wider font-semibold">Hourly Rate</p>
-              <p className="text-3xl font-bold text-green-400">৳{tutor.hourlyRate}</p>
+              <p className="text-zinc-500 text-sm uppercase tracking-wider font-semibold">
+                Hourly Rate
+              </p>
+              <p className="text-3xl font-bold text-green-400">
+                ৳{tutor.hourlyRate}
+              </p>
             </div>
           </div>
-          
+
           <p className="text-lg text-zinc-400 leading-relaxed max-w-2xl mt-4">
             {tutor.bio}
           </p>
@@ -53,16 +71,27 @@ export default async function TutorDetailsPage({
         {/* Availability Grid */}
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 mb-8">
           <div className="flex items-center gap-2 mb-6 text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="Ref-8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-blue-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="Ref-8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
             <h2 className="text-xl font-semibold">Availability Schedule</h2>
           </div>
 
           <div className="grid gap-4">
             {Object.entries(tutor.availability).map(([day, slots]: any) => (
-              <div 
-                key={day} 
+              <div
+                key={day}
                 className="group flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl hover:bg-zinc-800/50 transition-colors border border-transparent hover:border-zinc-700"
               >
                 <p className="font-medium text-zinc-300 min-w-25 mb-2 sm:mb-0">
@@ -83,6 +112,32 @@ export default async function TutorDetailsPage({
             ))}
           </div>
         </div>
+
+        <div className="mt-10">
+          <h2 className="text-xl font-bold mb-4">Reviews</h2>
+
+          {reviews.length === 0 ? (
+            <p className="text-gray-500">No reviews yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review: any) => (
+                <div key={review.id} className="border p-4 rounded">
+                  <div className="flex items-center gap-2 mb-1">
+                    <strong>{review.student?.name}</strong>
+                    <span className="text-yellow-600">
+                      {"★".repeat(review.rating)}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-700">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {user && user.role === "STUDENT" && (
+          <ReviewForm tutorId={tutor.userId} />
+        )}
 
         {/* Booking Component Section */}
         <div className="relative">
