@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/layout/Navbar";
+import DashboardSidebar from "@/components/layout/DashboardSidebar";
 
 export default async function DashboardLayout({
   children,
@@ -12,9 +12,10 @@ export default async function DashboardLayout({
   if (!user) redirect("/login");
 
   return (
-    <div className="min-h-screen bg-black text-zinc-200">
-      <Navbar user={user} />
-      <main className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen flex bg-gray-100">
+      <DashboardSidebar user={user} />
+
+      <main className="flex-1 p-6 bg-gray-100">
         {children}
       </main>
     </div>

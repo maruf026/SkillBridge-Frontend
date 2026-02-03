@@ -2,16 +2,33 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Navbar({ user }: { user: any }) {
   const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const logout = async () => {
-    await fetch("http://localhost:5000/api/auth/sign-out", {
-      method: "POST",
-      credentials: "include",
-    });
-    router.push("/login");
+    const confirmLogout = window.confirm(
+      "Are you sure you want to logout?"
+    );
+
+    if (!confirmLogout) return;
+
+    try {
+      setLoggingOut(true);
+
+      await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      router.push("/login");
+    } catch (err) {
+      alert("Logout failed. Please try again.");
+    } finally {
+      setLoggingOut(false);
+    }
   };
 
   return (
@@ -62,9 +79,14 @@ export default function Navbar({ user }: { user: any }) {
         {/* RIGHT */}
         <button
           onClick={logout}
-          className="text-sm text-red-400 hover:text-red-300"
+          disabled={loggingOut}
+          className={`text-sm ${
+            loggingOut
+              ? "text-zinc-500 cursor-not-allowed"
+              : "text-red-400 hover:text-red-300"
+          }`}
         >
-          Logout
+          {loggingOut ? "Logging out..." : "Logout"}
         </button>
       </div>
     </nav>
