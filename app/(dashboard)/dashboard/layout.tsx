@@ -12,11 +12,15 @@ export default async function DashboardLayout({
   if (!user) redirect("/login");
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50">
+      {/* Sidebar - responsive behavior handled internally */}
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 p-6 bg-gray-100">
-        {children}
+      {/* Main Content Area */}
+      <main className="flex-1 w-full relative">
+        <div className="p-4 md:p-8 lg:p-10 max-w-7xl mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   );

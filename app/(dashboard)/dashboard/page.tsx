@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { hasTutorProfile } from "@/lib/tutor";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -9,122 +10,85 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  /* ================= STUDENT ================= */
-  if (user.role === "STUDENT") {
+  const commonCardStyles = "group p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:border-indigo-500/50 transition-all duration-200";
+  const iconBoxStyles = "w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-xl mb-4 group-hover:bg-indigo-50 transition-colors";
+
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-bold">
-        Welcome, {user.name}
-      </h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* HEADER SECTION */}
+      <header className="mb-10">
+        <span className="text-xs font-black uppercase tracking-widest text-indigo-600">Overview</span>
+        <h1 className="text-3xl font-extrabold text-slate-900 mt-1">
+          {user.role === "ADMIN" ? "System Control" : `Welcome back, ${user.name.split(' ')[0]}!`}
+        </h1>
+        <p className="text-slate-500 font-medium">Manage your activities and account settings.</p>
+      </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <a
-          href="/tutors"
-          className="border p-5 rounded-lg hover:bg-zinc-900 transition"
-        >
-          <h2 className="font-semibold mb-1">
-            🔍 Browse Tutors
-          </h2>
-          <p className="text-sm text-zinc-400">
-            Find tutors by category and availability
-          </p>
-        </a>
+      {/* STUDENT DASHBOARD */}
+      {user.role === "STUDENT" && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Link href="/tutors" className={commonCardStyles}>
+            <div className={iconBoxStyles}>🔍</div>
+            <h2 className="font-bold text-slate-900 mb-1">Browse Tutors</h2>
+            <p className="text-sm text-slate-500 leading-relaxed">Find expert educators based on subject and budget.</p>
+          </Link>
 
-        <a
-          href="/dashboard/bookings"
-          className="border p-5 rounded-lg hover:bg-zinc-900 transition"
-        >
-          <h2 className="font-semibold mb-1">
-            📖 My Bookings
-          </h2>
-          <p className="text-sm text-zinc-400">
-            View booking status and history
-          </p>
-        </a>
+          <Link href="/dashboard/bookings" className={commonCardStyles}>
+            <div className={iconBoxStyles}>📖</div>
+            <h2 className="font-bold text-slate-900 mb-1">My Bookings</h2>
+            <p className="text-sm text-slate-500 leading-relaxed">Check your upcoming lessons and session history.</p>
+          </Link>
 
-        <a
-          href="/dashboard/profile"
-          className="border p-5 rounded-lg hover:bg-zinc-900 transition"
-        >
-          <h2 className="font-semibold mb-1">
-            👤 My Profile
-          </h2>
-          <p className="text-sm text-zinc-400">
-            View your account information
-          </p>
-        </a>
-      </div>
+          <Link href="/dashboard/profile" className={commonCardStyles}>
+            <div className={iconBoxStyles}>👤</div>
+            <h2 className="font-bold text-slate-900 mb-1">Account Settings</h2>
+            <p className="text-sm text-slate-500 leading-relaxed">Update your personal information and preferences.</p>
+          </Link>
+        </div>
+      )}
+
+      {/* TUTOR DASHBOARD */}
+      {user.role === "TUTOR" && (() => {
+        // Handle logic inside the component flow
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link href="/dashboard/tutor/bookings" className={commonCardStyles}>
+              <div className={iconBoxStyles}>📚</div>
+              <h2 className="font-bold text-slate-900 mb-1">Booking Requests</h2>
+              <p className="text-sm text-slate-500 leading-relaxed">Manage new student requests and schedule sessions.</p>
+            </Link>
+
+            <Link href="/dashboard/tutor/profile" className={commonCardStyles}>
+              <div className={iconBoxStyles}>✏️</div>
+              <h2 className="font-bold text-slate-900 mb-1">Profile Manager</h2>
+              <p className="text-sm text-slate-500 leading-relaxed">Keep your bio, rates, and availability up to date.</p>
+            </Link>
+          </div>
+        )
+      })()}
+
+      {/* ADMIN DASHBOARD */}
+      {user.role === "ADMIN" && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Link href="/dashboard/admin/users" className={commonCardStyles}>
+            <div className={iconBoxStyles}>👥</div>
+            <h2 className="font-bold text-slate-900 mb-1">Manage Users</h2>
+            <p className="text-sm text-slate-500 leading-relaxed">Approve tutors and manage account permissions.</p>
+          </Link>
+
+          <Link href="/dashboard/admin/bookings" className={commonCardStyles}>
+            <div className={iconBoxStyles}>📊</div>
+            <h2 className="font-bold text-slate-900 mb-1">Global Bookings</h2>
+            <p className="text-sm text-slate-500 leading-relaxed">Monitor all platform transactions and schedules.</p>
+          </Link>
+
+          <Link href="/dashboard/admin/categories" className={commonCardStyles}>
+            <div className={iconBoxStyles}>🗂️</div>
+            <h2 className="font-bold text-slate-900 mb-1">Categories</h2>
+            <p className="text-sm text-slate-500 leading-relaxed">Organize subjects and teaching departments.</p>
+          </Link>
+        </div>
+      )}
     </div>
   );
-}
-
-
-  /* ================= TUTOR ================= */
-  if (user.role === "TUTOR") {
-    const profileExists = await hasTutorProfile();
-
-    if (!profileExists) {
-      redirect("/dashboard/tutor/profile/create");
-    }
-
-    return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">
-          Tutor Dashboard
-        </h1>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <a
-            href="/dashboard/tutor/bookings"
-            className="border p-4 rounded hover:bg-zinc-900"
-          >
-            📚 Booking Requests
-          </a>
-
-          <a
-            href="/dashboard/tutor/profile"
-            className="border p-4 rounded hover:bg-zinc-900"
-          >
-            ✏️ Edit Profile
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  /* ================= ADMIN ================= */
-  if (user.role === "ADMIN") {
-    return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">
-          Admin Dashboard
-        </h1>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <a
-            href="/dashboard/admin/users"
-            className="border p-4 rounded hover:bg-zinc-900"
-          >
-            👥 Manage Users
-          </a>
-
-          <a
-            href="/dashboard/admin/bookings"
-            className="border p-4 rounded hover:bg-zinc-900"
-          >
-            📊 View All Bookings
-          </a>
-
-          <a
-            href="/dashboard/admin/categories"
-            className="border p-4 rounded hover:bg-zinc-900"
-          >
-            🗂️ Manage Categories
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
 }
