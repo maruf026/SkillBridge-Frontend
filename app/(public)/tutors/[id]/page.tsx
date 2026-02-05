@@ -135,9 +135,7 @@ export default async function TutorDetailsPage({
             </div>
           )}
         </div>
-        {user && user.role === "STUDENT" && (
-          <ReviewForm tutorId={tutor.userId} />
-        )}
+        
 
         {/* Booking Component Section */}
         <div className="relative">
