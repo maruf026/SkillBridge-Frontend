@@ -16,13 +16,11 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* HEADER SECTION */}
-      <header className="mb-10">
-        <span className="text-xs font-black uppercase tracking-widest text-indigo-600">Overview</span>
-        <h1 className="text-3xl font-extrabold text-slate-900 mt-1">
-          {user.role === "ADMIN" ? "System Control" : `Welcome back, ${user.name.split(' ')[0]}!`}
-        </h1>
-        <p className="text-slate-500 font-medium">Manage your activities and account settings.</p>
-      </header>
+      <h1 className="text-3xl font-extrabold text-slate-900 mt-1">
+  {user.role === "ADMIN"
+    ? `Admin Dashboard — ${user.name.split(" ")[0]}`
+    : `Welcome back, ${user.name.split(" ")[0]}!`}
+</h1>
 
       {/* STUDENT DASHBOARD */}
       {user.role === "STUDENT" && (
