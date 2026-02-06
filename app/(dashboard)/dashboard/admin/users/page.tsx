@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/auth";
+import { BanButton } from "@/components/layout/BanButton";
 
 async function getUsers() {
   const cookieStore = await cookies();
@@ -50,6 +51,11 @@ export default async function AdminUsersPage() {
     (u: any) => u.role === "STUDENT" || u.role === "TUTOR"
   );
 
+  async function handleToggle(id: string) {
+    "use server";
+    await toggleBan(id);
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-10">
       {/* Page Header */}
@@ -68,7 +74,7 @@ export default async function AdminUsersPage() {
       <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-2xl shadow-slate-200/60 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            {/* BIG BOLD HEADERS */}
+           
             <thead className="bg-slate-50 border-b-4 border-slate-200">
               <tr>
                 <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">
@@ -120,23 +126,12 @@ export default async function AdminUsersPage() {
                   </td>
 
                   <td className="px-10 py-7 text-right">
-                    <form
-                      action={async () => {
-                        "use server";
-                        await toggleBan(u.id);
-                      }}
-                    >
-                      <button
-                        type="submit"
-                        className={`px-6 py-2 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 ${
-                          u.isBanned
-                            ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-200"
-                            : "bg-rose-600 text-white hover:bg-rose-700 shadow-rose-200"
-                        }`}
-                      >
-                        {u.isBanned ? "Unban Account" : "Ban Account"}
-                      </button>
-                    </form>
+                    <BanButton 
+                userId={u.id} 
+                isBanned={u.isBanned} 
+                userName={u.name}
+                onToggle={handleToggle} 
+              />
                   </td>
                 </tr>
               ))}
