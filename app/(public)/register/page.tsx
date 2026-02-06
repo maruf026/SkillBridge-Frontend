@@ -35,26 +35,28 @@ export default function RegisterPage() {
     }
   };
 
+  // Reusable Tailwind class for the inputs
+  const inputStyles = "w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-900 font-semibold placeholder:text-slate-400 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none bg-white";
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Logo Icon */}
         <div className="mx-auto h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
           <span className="text-white font-bold text-2xl">S</span>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-          Create your account
+        <h2 className="mt-6 text-center text-4xl font-black text-slate-900 tracking-tight">
+          Join SkillBridge
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-600">
+        <p className="mt-2 text-center text-sm text-slate-600 font-medium">
           Already have an account?{" "}
-          <Link href="/login" className="font-bold text-indigo-600 hover:text-indigo-500">
+          <Link href="/login" className="font-bold text-indigo-600 hover:text-indigo-500 underline decoration-2 underline-offset-4">
             Sign in here
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl shadow-slate-200/60 border border-slate-100 sm:rounded-3xl sm:px-10">
+        <div className="bg-white py-10 px-4 shadow-2xl shadow-slate-200/60 border border-slate-100 sm:rounded-[2.5rem] sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             
             {/* ROLE SELECTION CARDS */}
@@ -62,34 +64,34 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setForm({ ...form, role: "STUDENT" })}
-                className={`p-4 rounded-2xl border-2 transition-all text-center ${
+                className={`p-4 rounded-2xl border-2 transition-all text-center flex flex-col items-center ${
                   form.role === "STUDENT" 
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-700" 
-                  : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
+                  ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-inner" 
+                  : "border-slate-100 bg-slate-50/50 text-slate-400 hover:border-slate-200"
                 }`}
               >
-                <span className="block text-2xl mb-1">🎓</span>
-                <span className="text-sm font-bold uppercase tracking-tight">Student</span>
+                <span className="text-3xl mb-1">🎓</span>
+                <span className="text-xs font-black uppercase tracking-widest">Student</span>
               </button>
               <button
                 type="button"
                 onClick={() => setForm({ ...form, role: "TUTOR" })}
-                className={`p-4 rounded-2xl border-2 transition-all text-center ${
+                className={`p-4 rounded-2xl border-2 transition-all text-center flex flex-col items-center ${
                   form.role === "TUTOR" 
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-700" 
-                  : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
+                  ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-inner" 
+                  : "border-slate-100 bg-slate-50/50 text-slate-400 hover:border-slate-200"
                 }`}
               >
-                <span className="block text-2xl mb-1">👨‍🏫</span>
-                <span className="text-sm font-bold uppercase tracking-tight">Tutor</span>
+                <span className="text-3xl mb-1">👨‍🏫</span>
+                <span className="text-xs font-black uppercase tracking-widest">Tutor</span>
               </button>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Full Name</label>
+              <label className="block text-sm font-black text-slate-700 mb-1 uppercase tracking-wider">Full Name</label>
               <input
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
+                className={inputStyles}
                 placeholder="John Doe"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -97,11 +99,11 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
+              <label className="block text-sm font-black text-slate-700 mb-1 uppercase tracking-wider">Email Address</label>
               <input
                 type="email"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
+                className={inputStyles}
                 placeholder="you@example.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -109,11 +111,11 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Password</label>
+              <label className="block text-sm font-black text-slate-700 mb-1 uppercase tracking-wider">Password</label>
               <input
                 type="password"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
+                className={inputStyles}
                 placeholder="••••••••"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -122,14 +124,15 @@ export default function RegisterPage() {
 
             <button
               disabled={isLoading}
-              className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-5 px-4 rounded-2xl shadow-xl shadow-indigo-100 text-lg font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-[0.97] disabled:opacity-70"
             >
-              {isLoading ? "Creating Account..." : "Join SkillBridge"}
+              {isLoading ? "Creating Account..." : "Create Free Account"}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-slate-400">
-            By signing up, you agree to our Terms of Service and Privacy Policy.
+          <p className="mt-8 text-center text-xs text-slate-400 font-bold leading-relaxed">
+            By signing up, you agree to our <br/>
+            <span className="text-slate-600 underline">Terms of Service</span> and <span className="text-slate-600 underline">Privacy Policy</span>.
           </p>
         </div>
       </div>

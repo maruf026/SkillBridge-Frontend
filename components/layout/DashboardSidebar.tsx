@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function DashboardSidebar({
   user,
@@ -14,13 +15,10 @@ export default function DashboardSidebar({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [loggingOut, setLoggingOut] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Close sidebar when clicking a link (especially important for mobile)
   const closeSidebar = () => setIsOpen(false);
 
-  // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -29,16 +27,40 @@ export default function DashboardSidebar({
     }
   }, [isOpen]);
 
-  const logout = async () => {
-    const ok = window.confirm("Are you sure you want to logout?");
-    if (!ok) return;
-    setLoggingOut(true);
-    await fetch("http://localhost:5000/api/auth/sign-out", {
-      method: "POST",
-      credentials: "include",
+ const handleLogout = () => {
+    toast.warning("Confirm Logout", {
+      description: "Are you sure you want to end your session?",
+      action: {
+        label: "Logout",
+        onClick: () => executeLogout(),
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {}, // <--- Add this empty function to satisfy TypeScript
+      },
     });
-    router.push("/login");
-    router.refresh();
+  };
+
+  const executeLogout = async () => {
+    // 2. Trigger a promise-based toast for the fetch call
+    toast.promise(
+      async () => {
+        const res = await fetch("http://localhost:5000/api/auth/sign-out", {
+          method: "POST",
+          credentials: "include",
+        });
+        
+        if (!res.ok) throw new Error("Logout failed");
+        
+        router.push("/login");
+        router.refresh();
+      },
+      {
+        loading: "Clearing session...",
+        success: "Logged out successfully!",
+        error: "Could not logout. Try again.",
+      }
+    );
   };
 
   const navItemClasses = (href: string) => `
@@ -50,8 +72,8 @@ export default function DashboardSidebar({
 
   return (
     <>
-      {/* --- MOBILE TOP BAR (Always Visible on Mobile) --- */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-[#0B1120] border-b border-slate-800 sticky top-0 z-60 w-full">
+      {/* --- MOBILE TOP BAR --- */}
+      <div className="lg:hidden flex items-center justify-between p-4 bg-[#0B1120] border-b border-slate-800 sticky top-0 z-50 w-full">
         <h2 className="text-white font-black tracking-tighter text-xl text-left">SkillBridge</h2>
         <button 
           onClick={() => setIsOpen(!isOpen)}
@@ -67,10 +89,9 @@ export default function DashboardSidebar({
 
       {/* --- SIDEBAR --- */}
       <aside className={`
-        fixed inset-y-0 left-0 z-100 w-72 bg-[#0B1120] text-slate-100 flex flex-col transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-60 w-72 bg-[#0B1120] text-slate-100 flex flex-col transform transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:inset-auto
       `}>
-        {/* Sidebar Header */}
         <div className="p-8">
           <h2 className="text-2xl font-black tracking-tighter text-white mb-1">SkillBridge</h2>
           <div className="flex items-center gap-2">
@@ -81,13 +102,12 @@ export default function DashboardSidebar({
           </div>
         </div>
 
-        {/* Navigation Section */}
-        <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           <Link href="/dashboard" className={navItemClasses("/dashboard")} onClick={closeSidebar}>
-             📊 Dashboard
+              📊 Dashboard
           </Link>
           <Link href="/dashboard/profile" className={navItemClasses("/dashboard/profile")} onClick={closeSidebar}>
-             👤 My Profile
+              👤 My Profile
           </Link>
 
           <div className="mt-8 pt-8 border-t border-slate-800/50">
@@ -116,14 +136,12 @@ export default function DashboardSidebar({
           </div>
         </nav>
 
-        {/* Logout Section */}
         <div className="p-6 mt-auto border-t border-slate-800/50">
           <button
-            onClick={logout}
-            disabled={loggingOut}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-400 font-bold hover:bg-rose-500/10 transition-colors disabled:opacity-50"
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-400 font-black text-sm uppercase tracking-widest hover:bg-rose-500/10 transition-all active:scale-[0.98]"
           >
-            {loggingOut ? "Logging out..." : "🚪 Logout Session"}
+            🚪 Logout Session
           </button>
         </div>
       </aside>
@@ -131,7 +149,7 @@ export default function DashboardSidebar({
       {/* --- MOBILE OVERLAY --- */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-80 lg:hidden"
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-55 lg:hidden"
           onClick={closeSidebar}
         />
       )}

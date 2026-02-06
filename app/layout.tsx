@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 
 const geistSans = Geist({
@@ -30,6 +31,25 @@ export default function RootLayout({
       >
         
         {children}
+       <Toaster 
+          position="top-center" 
+          toastOptions={{
+            // Applying your site's "Big & Bold" aesthetic
+            className: "rounded-2xl border-2 border-slate-800 bg-[#0B1120] text-white p-4 shadow-2xl",
+            descriptionClassName: "text-slate-400 font-medium",
+            actionButtonStyle: {
+              backgroundColor: '#4f46e5', // indigo-600
+              borderRadius: '0.75rem',
+              fontWeight: '900',
+              padding: '0.5rem 1rem',
+            },
+            cancelButtonStyle: {
+              backgroundColor: 'transparent',
+              color: '#94a3b8', // slate-400
+              fontWeight: '700',
+            },
+          }}
+        />
       </body>
     </html>
   );
