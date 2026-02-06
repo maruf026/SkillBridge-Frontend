@@ -33,11 +33,12 @@ export default function DashboardSidebar({
     const ok = window.confirm("Are you sure you want to logout?");
     if (!ok) return;
     setLoggingOut(true);
-    await fetch("http://localhost:5000/api/auth/logout", {
+    await fetch("http://localhost:5000/api/auth/sign-out", {
       method: "POST",
       credentials: "include",
     });
     router.push("/login");
+    router.refresh();
   };
 
   const navItemClasses = (href: string) => `
@@ -50,7 +51,7 @@ export default function DashboardSidebar({
   return (
     <>
       {/* --- MOBILE TOP BAR (Always Visible on Mobile) --- */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-[#0B1120] border-b border-slate-800 sticky top-0 z-[60] w-full">
+      <div className="lg:hidden flex items-center justify-between p-4 bg-[#0B1120] border-b border-slate-800 sticky top-0 z-60 w-full">
         <h2 className="text-white font-black tracking-tighter text-xl text-left">SkillBridge</h2>
         <button 
           onClick={() => setIsOpen(!isOpen)}

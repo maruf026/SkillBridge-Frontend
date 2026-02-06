@@ -1,15 +1,13 @@
 import BookTutor from "@/components/booking/BookTutor";
-import ReviewForm from "@/components/review/ReviewForm";
 import { getCurrentUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 async function getTutor(id: string) {
   const res = await fetch(`http://localhost:5000/api/tutors/${id}`, {
     cache: "no-store",
   });
-
   if (!res.ok) return null;
-
   const json = await res.json();
   return json.data;
 }
@@ -19,9 +17,7 @@ async function getTutorReviews(tutorId: string) {
     `http://localhost:5000/api/reviews/tutor/${tutorId}`,
     { cache: "no-store" },
   );
-
   if (!res.ok) return [];
-
   const json = await res.json();
   return json.data;
 }
@@ -33,121 +29,112 @@ export default async function TutorDetailsPage({
 }) {
   const { id } = await params;
   const tutor = await getTutor(id);
-   if (!tutor) notFound();
+  if (!tutor) notFound();
+  
   const user = await getCurrentUser();
-  const reviews = await getTutorReviews(tutor.userId);
-
- 
+  const reviews = await getTutorReviews(tutor.id);
 
   return (
-    <div className="min-h-screen bg-black text-zinc-200">
-      <div className="max-w-3xl mx-auto py-12 px-4">
-        {/* Header Section */}
-        <div className="border-b border-zinc-800 pb-8 mb-8">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h1 className="text-4xl font-bold text-white tracking-tight">
-                {tutor.name}
-              </h1>
-              <span className="inline-block mt-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-medium border border-blue-500/20">
-                {tutor.category?.name || "Expert Tutor"}
-              </span>
-            </div>
-            <div className="text-right">
-              <p className="text-zinc-500 text-sm uppercase tracking-wider font-semibold">
-                Hourly Rate
-              </p>
-              <p className="text-3xl font-bold text-green-400">
-                ৳{tutor.hourlyRate}
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+      {/* Top Navigation / Back Button */}
+      <div className="max-w-5xl mx-auto pt-8 px-4">
+        <Link href="/tutors" className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+          ← Browse All Tutors
+        </Link>
+      </div>
 
-          <p className="text-lg text-zinc-400 leading-relaxed max-w-2xl mt-4">
-            {tutor.bio}
-          </p>
-        </div>
-
-        {/* Availability Grid */}
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 mb-8">
-          <div className="flex items-center gap-2 mb-6 text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-blue-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="Ref-8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <h2 className="text-xl font-semibold">Availability Schedule</h2>
-          </div>
-
-          <div className="grid gap-4">
-            {Object.entries(tutor.availability).map(([day, slots]: any) => (
-              <div
-                key={day}
-                className="group flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl hover:bg-zinc-800/50 transition-colors border border-transparent hover:border-zinc-700"
-              >
-                <p className="font-medium text-zinc-300 min-w-25 mb-2 sm:mb-0">
-                  {day}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {slots.map((slot: any, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-4 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-sm text-zinc-300 group-hover:border-blue-500/30 transition-all"
-                    >
-                      {slot.from} – {slot.to}
-                    </span>
-                  ))}
-                </div>
+      <div className="max-w-5xl mx-auto py-8 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* LEFT COLUMN: Profile Info */}
+        <div className="lg:col-span-2 space-y-8">
+          <section className="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-10 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+              <div>
+                <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest border border-indigo-100 mb-3">
+                  {tutor.category?.name || "Expert Tutor"}
+                </span>
+                <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+                  {tutor.name}
+                </h1>
               </div>
-            ))}
-          </div>
-        </div>
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center min-w-35">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Hourly Rate</p>
+                <p className="text-3xl font-black text-emerald-600">৳{tutor.hourlyRate}</p>
+              </div>
+            </div>
 
-        <div className="mt-10">
-          <h2 className="text-xl font-bold mb-4">Reviews</h2>
+            <h3 className="text-lg font-bold text-slate-900 mb-3">About the Tutor</h3>
+            <p className="text-slate-600 leading-relaxed text-lg">
+              {tutor.bio}
+            </p>
+          </section>
 
-          {reviews.length === 0 ? (
-            <p className="text-gray-500">No reviews yet.</p>
-          ) : (
-            <div className="space-y-4">
-              {reviews.map((review: any) => (
-                <div key={review.id} className="border p-4 rounded">
-                  <div className="flex items-center gap-2 mb-1">
-                    <strong>{review.student?.name}</strong>
-                    <span className="text-yellow-600">
-                      {"★".repeat(review.rating)}
-                    </span>
+          {/* Availability Section */}
+          <section className="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-10 shadow-sm">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Weekly Schedule</h2>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {Object.entries(tutor.availability).map(([day, slots]: any) => (
+                <div key={day} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <p className="font-bold text-slate-700 w-24">{day}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {slots.map((slot: any, idx: number) => (
+                      <span key={idx} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600">
+                        {slot.from} – {slot.to}
+                      </span>
+                    ))}
                   </div>
-
-                  <p className="text-sm text-gray-700">{review.comment}</p>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-        
+          </section>
 
-        {/* Booking Component Section */}
-        <div className="relative">
-          <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-10"></div>
-          <div className="relative">
-            <BookTutor
-              tutorId={tutor.userId}
-              isLoggedIn={!!user}
-              role={user?.role}
-            />
+          {/* Reviews Section */}
+          <section className="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-10 shadow-sm">
+            <h2 className="text-2xl font-black text-slate-900 mb-8">Student Reviews</h2>
+            {reviews.length === 0 ? (
+              <div className="text-center py-10 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                <p className="text-slate-400 font-medium">No reviews yet for this tutor.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6">
+                {reviews.map((review: any) => (
+                  <div key={review.id} className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                    <div className="flex justify-between items-start mb-3">
+                      <strong className="text-slate-900 font-bold">{review.student?.name}</strong>
+                      <div className="flex text-amber-400">
+                        {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                      </div>
+                    </div>
+                    <p className="text-slate-600 text-sm leading-relaxed italic">"{review.comment}"</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+
+        {/* RIGHT COLUMN: Booking Sticky Widget */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-xl shadow-indigo-900/5 overflow-hidden">
+              <div className="p-1 bg-indigo-600"></div> {/* Accent top bar */}
+              <div className="p-8">
+                <BookTutor
+                  tutorId={tutor.userId}
+                  isLoggedIn={!!user}
+                  role={user?.role}
+                />
+              </div>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );
