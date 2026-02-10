@@ -11,7 +11,7 @@ async function getUsers() {
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
-  const res = await fetch("http://localhost:5000/api/admin/users", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`, {
     headers: { Cookie: cookieHeader },
     cache: "no-store",
   });
@@ -29,7 +29,7 @@ async function toggleBan(userId: string) {
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
-  await fetch(`http://localhost:5000/api/admin/users/${userId}/ban`, {
+  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}/ban`, {
     method: "PATCH",
     headers: { Cookie: cookieHeader },
     cache: "no-store",

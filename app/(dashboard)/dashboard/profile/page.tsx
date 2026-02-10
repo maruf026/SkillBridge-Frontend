@@ -10,7 +10,7 @@ async function getTutorProfile() {
     .map(c => `${c.name}=${c.value}`)
     .join("; ");
 
-  const res = await fetch("http://localhost:5000/api/tutors/profile/me", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tutors/profile/me`, {
     headers: { Cookie: cookieHeader },
     cache: "no-store",
   });

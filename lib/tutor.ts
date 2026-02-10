@@ -9,7 +9,7 @@ export async function hasTutorProfile() {
     .join("; ");
 
   const res = await fetch(
-    "http://localhost:5000/api/tutors/profile/me",
+    `${process.env.NEXT_PUBLIC_API_URL}/api/tutors/profile/me`,
     {
       headers: {
         Cookie: cookieHeader,
@@ -18,5 +18,5 @@ export async function hasTutorProfile() {
     }
   );
 
-  return res.ok; // 200 = profile exists, 404 = not exists
+  return res.ok; 
 }

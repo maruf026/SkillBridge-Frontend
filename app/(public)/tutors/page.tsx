@@ -2,7 +2,7 @@ import TutorsClient from "@/components/tutor/TutorsClient";
 
 
 async function getTutors() {
-  const res = await fetch("http://localhost:5000/api/tutors", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tutors`, {
     cache: "no-store",
   });
 

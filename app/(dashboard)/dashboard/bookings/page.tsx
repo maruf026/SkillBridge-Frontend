@@ -11,7 +11,7 @@ async function getStudentBookings() {
     .join("; ");
 
   const res = await fetch(
-    "http://localhost:5000/api/bookings/student",
+    `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/student`,
     {
       headers: { Cookie: cookieHeader },
       cache: "no-store",

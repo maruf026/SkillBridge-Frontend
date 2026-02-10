@@ -10,7 +10,7 @@ async function getAllBookings() {
     .join("; ");
 
   const res = await fetch(
-    "http://localhost:5000/api/admin/bookings",
+    `${process.env.NEXT_PUBLIC_API_URL}/api/admin/bookings`,
     {
       headers: { Cookie: cookieHeader },
       cache: "no-store",
@@ -61,7 +61,7 @@ export default async function AdminBookingsPage() {
       <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-2xl shadow-slate-200/60 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            {/* BIG BOLD HEADERS */}
+         
             <thead className="bg-slate-50 border-b-4 border-slate-200">
               <tr>
                 <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">

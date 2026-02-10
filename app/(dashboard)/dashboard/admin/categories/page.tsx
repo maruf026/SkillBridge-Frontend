@@ -10,7 +10,7 @@ export default function AdminCategoriesPage() {
   const loadCategories = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/admin/categories",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/categories`,
         { credentials: "include" }
       );
       const json = await res.json();
@@ -30,7 +30,7 @@ export default function AdminCategoriesPage() {
     if (!name) return;
 
     await fetch(
-      "http://localhost:5000/api/admin/categories",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/admin/categories`,
       {
         method: "POST",
         credentials: "include",
@@ -47,7 +47,7 @@ export default function AdminCategoriesPage() {
     if (!confirm("Are you sure you want to delete this category?")) return;
     
     await fetch(
-      `http://localhost:5000/api/admin/categories/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/admin/categories/${id}`,
       {
         method: "DELETE",
         credentials: "include",

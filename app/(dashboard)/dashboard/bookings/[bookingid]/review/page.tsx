@@ -12,7 +12,7 @@ async function getBooking(bookingId: string) {
     .join("; ");
 
   const res = await fetch(
-    `http://localhost:5000/api/bookings/${bookingId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${bookingId}`,
     {
       headers: { Cookie: cookieHeader },
       cache: "no-store",

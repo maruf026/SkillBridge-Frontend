@@ -15,10 +15,10 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // 2. Use toast.promise to handle the entire lifecycle
+  
     toast.promise(
       async () => {
-        const res = await fetch("http://localhost:5000/api/auth/sign-in/email", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-in/email`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -28,12 +28,12 @@ export default function LoginPage() {
         });
 
         if (!res.ok) {
-          // Triggering a custom error message from the backend if available
+        
           const data = await res.json().catch(() => ({}));
           throw new Error(data.message || "Invalid email or password");
         }
 
-        // Slight delay before redirect so user can actually see the success toast
+     
         setTimeout(() => {
           router.push("/dashboard");
           router.refresh();
@@ -71,7 +71,7 @@ export default function LoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-10 px-4 shadow-2xl shadow-slate-200 border border-slate-100 sm:rounded-3xl sm:px-10">
           
-          {/* Note: I removed the static {error} div since the Toast handles it now! */}
+        
 
           <form className="space-y-6" onSubmit={handleSubmit} autoComplete="on">
             <div>

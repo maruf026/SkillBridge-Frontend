@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 async function getTutor(id: string) {
-  const res = await fetch(`http://localhost:5000/api/tutors/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tutors/${id}`, {
     cache: "no-store",
   });
   if (!res.ok) return null;
@@ -14,7 +14,7 @@ async function getTutor(id: string) {
 
 async function getTutorReviews(tutorId: string) {
   const res = await fetch(
-    `http://localhost:5000/api/reviews/tutor/${tutorId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/tutor/${tutorId}`,
     { cache: "no-store" },
   );
   if (!res.ok) return [];

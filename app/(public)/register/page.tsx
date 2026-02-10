@@ -22,7 +22,7 @@ export default function RegisterPage() {
     // 2. Use toast.promise for the registration flow
     toast.promise(
       async () => {
-        const res = await fetch("http://localhost:5000/api/auth/sign-up/email", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-up/email`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },

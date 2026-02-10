@@ -53,7 +53,7 @@ export default function CreateTutorProfilePage() {
     }
 
     setLoading(true);
-    const res = await fetch("http://localhost:5000/api/tutors/profile", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tutors/profile`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
