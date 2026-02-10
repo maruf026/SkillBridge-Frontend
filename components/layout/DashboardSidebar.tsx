@@ -45,7 +45,7 @@ export default function DashboardSidebar({
     // 2. Trigger a promise-based toast for the fetch call
     toast.promise(
       async () => {
-        const res = await fetch("http://localhost:5000/api/auth/sign-out", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-out`, {
           method: "POST",
           credentials: "include",
         });

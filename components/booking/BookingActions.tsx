@@ -21,7 +21,7 @@ export default function BookingActions({
     setLoading(true);
 
     await fetch(
-      `http://localhost:5000/api/bookings/${bookingId}/status`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${bookingId}/status`,
       {
         method: "PATCH",
         credentials: "include",

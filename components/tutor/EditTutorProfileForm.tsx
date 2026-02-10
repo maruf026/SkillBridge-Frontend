@@ -44,7 +44,7 @@ export default function EditTutorProfileForm({ profile }: { profile: any }) {
     setError("");
     setLoading(true);
 
-    const res = await fetch("http://localhost:5000/api/tutors/profile", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tutors/profile`, {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

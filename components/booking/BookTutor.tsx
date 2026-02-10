@@ -39,7 +39,7 @@ export default function BookTutor({
     setError("");
 
     const res = await fetch(
-      "http://localhost:5000/api/bookings",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
       {
         method: "POST",
         credentials: "include",
@@ -80,7 +80,7 @@ export default function BookTutor({
           </label>
           <input
             type="datetime-local"
-            className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all [color-scheme:dark]"
+            className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all scheme-dark"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
@@ -96,7 +96,7 @@ export default function BookTutor({
           className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center
             ${loading 
               ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
-              : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20 active:scale-[0.98]"
+              : "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20 active:scale-[0.98]"
             }`}
         >
           {loading ? (
