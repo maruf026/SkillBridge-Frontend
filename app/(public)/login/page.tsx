@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "sonner"; // 1. Import toast
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,38 +16,32 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-  
-    toast.promise(
-      async () => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-in/email`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
+    const toastId = toast.loading("Authenticating your credentials...");
+
+    try {
+      const { error } = await authClient.signIn.email({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast.error(error.message || "Invalid email or password", {
+          id: toastId,
         });
-
-        if (!res.ok) {
-        
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.message || "Invalid email or password");
-        }
-
-     
-        setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
-        }, 1000);
-        
-        return "Welcome back to SkillBridge!";
-      },
-      {
-        loading: "Authenticating your credentials...",
-        success: (data) => `${data}`,
-        error: (err) => `${err.message}`,
+        setIsLoading(false);
+        return;
       }
-    );
+
+      toast.success("Welcome back to SkillBridge!", { id: toastId });
+
+      // Redirect after successful login
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.", {
+        id: toastId,
+      });
+    }
 
     setIsLoading(false);
   };
@@ -62,7 +57,10 @@ export default function LoginPage() {
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600 font-medium">
           New to SkillBridge?{" "}
-          <Link href="/register" className="text-indigo-600 hover:text-indigo-500 font-bold">
+          <Link
+            href="/register"
+            className="text-indigo-600 hover:text-indigo-500 font-bold"
+          >
             Create an account
           </Link>
         </p>
@@ -70,16 +68,14 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-10 px-4 shadow-2xl shadow-slate-200 border border-slate-100 sm:rounded-3xl sm:px-10">
-          
-        
-
-          <form className="space-y-6" onSubmit={handleSubmit} autoComplete="on">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
+              <label className="block text-sm font-bold text-slate-700 mb-1">
+                Email Address
+              </label>
               <input
                 type="email"
                 required
-                autoComplete="email"
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none text-slate-900 font-medium"
                 placeholder="you@example.com"
                 value={email}
@@ -88,13 +84,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-bold text-slate-700">Password</label>
-              </div>
+              <label className="block text-sm font-bold text-slate-700 mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 required
-                autoComplete="current-password"
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none text-slate-900 font-medium"
                 placeholder="••••••••"
                 value={password}
@@ -102,32 +97,11 @@ export default function LoginPage() {
               />
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-50 border-slate-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600 font-bold">
-                Keep me signed in
-              </label>
-            </div>
-
             <button
               disabled={isLoading}
-              className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-black uppercase tracking-widest text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 transition-all active:scale-[0.98] disabled:opacity-70"
+              className="w-full flex justify-center py-4 px-4 rounded-xl shadow-lg text-lg font-black uppercase tracking-widest text-white bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:opacity-70"
             >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                "Sign In"
-              )}
+              {isLoading ? "Processing..." : "Sign In"}
             </button>
           </form>
         </div>
