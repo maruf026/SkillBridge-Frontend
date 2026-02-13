@@ -2,32 +2,25 @@ import { cookies } from "next/headers";
 
 export async function getCurrentUser() {
   try {
-    // FIX: You MUST await cookies() in Next.js 15+
-    const cookieStore = await cookies(); 
+    const cookieStore = await cookies();
+    // This is the "Blog Form" way of getting all cookies
+    const allCookies = cookieStore.toString(); 
 
-    const cookieHeader = cookieStore
-      .getAll()
-      .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join("; ");
-
-    const res = await fetch(
-  // Change /session to /get-session
-  `${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`, 
-  {
-    headers: {
-      Cookie: cookieHeader,
-    },
-    cache: "no-store",
-  }
-);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`, {
+      method: "GET",
+      headers: {
+        // Pass the cookies exactly like your blog form
+        "Cookie": allCookies, 
+      },
+      cache: "no-store",
+    });
 
     if (!res.ok) return null;
 
     const data = await res.json();
-    // Better-auth usually returns { session, user }
-    return data?.user ?? null; 
+    return data?.user ?? null;
   } catch (error) {
-    console.error("getCurrentUser error:", error);
+    console.error("Auth Error:", error);
     return null;
   }
 }
