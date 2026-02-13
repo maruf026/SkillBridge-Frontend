@@ -11,14 +11,15 @@ export async function getCurrentUser() {
       .join("; ");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`, // Standard better-auth endpoint is get-session
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-        cache: "no-store",
-      }
-    );
+  // Change /session to /get-session
+  `${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`, 
+  {
+    headers: {
+      Cookie: cookieHeader,
+    },
+    cache: "no-store",
+  }
+);
 
     if (!res.ok) return null;
 
