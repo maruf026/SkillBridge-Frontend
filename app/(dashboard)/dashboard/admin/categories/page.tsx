@@ -29,18 +29,31 @@ export default function AdminCategoriesPage() {
   const addCategory = async () => {
     if (!name) return;
 
-    await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/admin/categories`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
-      }
-    );
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/categories`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { 
+            "Content-Type": "application/json",
+            // This is often required by Better-Auth to verify the request is intentional
+            "beta-auth": "true" 
+          },
+          body: JSON.stringify({ name }),
+        }
+      );
 
-    setName("");
-    loadCategories();
+      if (res.status === 401) {
+        alert("Session expired or Not an Admin. Please re-login.");
+        return;
+      }
+
+      setName("");
+      loadCategories();
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
   };
 
   const deleteCategory = async (id: string) => {
