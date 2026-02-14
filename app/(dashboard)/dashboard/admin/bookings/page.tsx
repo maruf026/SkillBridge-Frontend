@@ -1,31 +1,30 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { getCurrentUser } from "@/lib/auth"; 
+import { cookies } from "next/headers";
+import { getCurrentUser } from "@/lib/auth";
 
 async function getAllBookings() {
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map(c => `${c.name}=${c.value}`)
+    .join("; ");
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/admin/bookings`,
     {
-      
-      headers: await headers(),
+      headers: { Cookie: cookieHeader },
       cache: "no-store",
     }
   );
 
-  if (!res.ok) {
-    console.error("Booking fetch failed:", res.status);
-    return [];
-  }
+  if (!res.ok) throw new Error("Failed to fetch bookings");
 
   const json = await res.json();
-  return json.data || [];
+  return json.data;
 }
 
 export default async function AdminBookingsPage() {
-  // 1. Use your existing helper to get the user
   const user = await getCurrentUser();
-
-  // 2. Protection Logic
   if (!user) redirect("/login");
   if (user.role !== "ADMIN") redirect("/dashboard");
 
@@ -46,6 +45,7 @@ export default async function AdminBookingsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-10">
+      {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-l-4 border-indigo-600 pl-6">
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">
@@ -57,17 +57,28 @@ export default async function AdminBookingsPage() {
         </div>
       </div>
 
+      {/* Table Container */}
       <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-2xl shadow-slate-200/60 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
+         
             <thead className="bg-slate-50 border-b-4 border-slate-200">
               <tr>
-                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">Student</th>
-                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">Tutor</th>
-                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">Schedule</th>
-                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter text-center">Status</th>
+                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">
+                  Student
+                </th>
+                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">
+                  Tutor
+                </th>
+                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter">
+                  Schedule
+                </th>
+                <th className="px-10 py-8 text-xl font-black text-slate-900 tracking-tighter text-center">
+                  Status
+                </th>
               </tr>
             </thead>
+
             <tbody className="divide-y-2 divide-slate-100">
               {bookings.map((b: any) => (
                 <tr key={b.id} className="hover:bg-indigo-50/20 transition-all group">
