@@ -1,20 +1,19 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { getCurrentUser } from "@/lib/auth";
 import EditTutorProfileForm from "@/components/tutor/EditTutorProfileForm";
 
 async function getTutorProfile() {
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map(c => `${c.name}=${c.value}`)
-    .join("; ");
-
   try {
+    const incomingHeaders = await headers();
+    const cookie = incomingHeaders.get("cookie") || "";
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/tutors/profile/me`,
       {
-        headers: { Cookie: cookieHeader },
+        headers: {
+          cookie,
+        },
         cache: "no-store",
       }
     );
@@ -52,9 +51,6 @@ export default async function TutorProfilePage() {
         </p>
       </div>
 
-      {/* If the error persists, check if EditTutorProfileForm 
-         is exported as 'default' in its file. 
-      */}
       <EditTutorProfileForm profile={profile} />
     </div>
   );

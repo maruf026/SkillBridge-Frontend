@@ -65,7 +65,7 @@ export default async function CreateTutorProfilePage() {
             <input
               name="categoryName"
               required
-              className="w-full px-4 py-3 border rounded-xl"
+              className="text-slate-900 w-full px-4 py-3 border rounded-xl"
               placeholder="Mathematics"
             />
           </div>
@@ -76,7 +76,7 @@ export default async function CreateTutorProfilePage() {
               type="number"
               name="hourlyRate"
               required
-              className="w-full px-4 py-3 border rounded-xl"
+              className="text-slate-900 w-full px-4 py-3 border rounded-xl"
               placeholder="500"
             />
           </div>
@@ -86,7 +86,7 @@ export default async function CreateTutorProfilePage() {
             <textarea
               name="bio"
               required
-              className="w-full px-4 py-3 border rounded-xl h-32"
+              className="text-slate-900 w-full px-4 py-3 border rounded-xl h-32"
             />
           </div>
 
