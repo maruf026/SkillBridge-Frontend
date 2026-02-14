@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client"; // 👈 Import your authClient
 
 export default function DashboardSidebar({
   user,
@@ -27,7 +28,7 @@ export default function DashboardSidebar({
     }
   }, [isOpen]);
 
- const handleLogout = () => {
+  const handleLogout = () => {
     toast.warning("Confirm Logout", {
       description: "Are you sure you want to end your session?",
       action: {
@@ -36,29 +37,30 @@ export default function DashboardSidebar({
       },
       cancel: {
         label: "Cancel",
-        onClick: () => {}, // <--- Add this empty function to satisfy TypeScript
+        onClick: () => {},
       },
     });
   };
 
   const executeLogout = async () => {
-    // 2. Trigger a promise-based toast for the fetch call
     toast.promise(
       async () => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-out`, {
-          method: "POST",
-          credentials: "include",
+        // 👈 Use authClient instead of manual fetch
+        const { error } = await authClient.signOut({
+          fetchOptions: {
+            onSuccess: () => {
+              router.push("/login");
+              router.refresh();
+            },
+          },
         });
-        
-        if (!res.ok) throw new Error("Logout failed");
-        
-        router.push("/login");
-        router.refresh();
+
+        if (error) throw new Error(error.message || "Logout failed");
       },
       {
         loading: "Clearing session...",
         success: "Logged out successfully!",
-        error: "Could not logout. Try again.",
+        error: (err) => err.message || "Could not logout. Try again.",
       }
     );
   };
